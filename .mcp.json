@@ -30,7 +30,7 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
-        "Authorization": "Bearer <Github_token>"
+        "Authorization": "Bearer ${GITHUB_TOKEN}"
       }
     },
     "serena": {
