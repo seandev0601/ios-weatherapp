@@ -7,7 +7,7 @@
 - **架構模式**：MVVM + Combine
 - **測試框架**：XCTest + XCUITest
 - **天氣 API**：Apple WeatherKit
-- **AI 整合**：Claude Code + 6種 MCP
+- **AI 整合**：Claude Code + 5種 MCP
 
 ### 開發工具鏈
 - **IDE**：Xcode 15.0+
@@ -18,7 +18,6 @@
 
 ### MCP 生態系統
 - **XcodeBuildMCP**：專案建置和模擬器管理
-- **Figma MCP**：UI 設計同步和規範提取
 - **GitHub MCP**：版本控制和協作管理
 - **filesystem MCP**：專案結構最佳化
 - **context7 MCP**：即時程式碼文檔參考

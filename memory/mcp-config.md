@@ -1,6 +1,6 @@
 ## MCP 伺服器記憶體匯入配置
 
-### 6種核心 MCP 伺服器設定
+### 5種核心 MCP 伺服器設定
 
 #### XcodeBuildMCP
 - **官方來源**：[cameroncooke/XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP)
@@ -12,21 +12,12 @@
   - 裝置管理：發現和管理實體 Apple 裝置
   - 自動化工作流程：支援增量建置、UI 自動化
 
-#### Figma MCP
-- **官方來源**：[modelcontextprotocol/server-figma](https://github.com/modelcontextprotocol/server-figma)
-- **核心作用**：UI 設計協作整合和設計系統同步
-- **安裝指令**：`claude mcp add figma npx @modelcontextprotocol/server-figma`
-- **環境變數**：`export FIGMA_ACCESS_TOKEN=figd_your_figma_token`
-- **主要功能**：
-  - 設計提取：從 Figma 檔案提取顏色、字體、間距規範
-  - 元件同步：將設計元件轉換為程式碼元件
-  - 樣式生成：自動生成 SwiftUI 樣式和主題檔案
 
 #### GitHub MCP
-- **官方來源**：[github/github-mcp-server](https://github.com/github/github-mcp-server)
+- **官方來源**：[GitHub Copilot MCP](https://api.githubcopilot.com/mcp)
 - **核心作用**：GitHub 平台 AI 整合工具
-- **安裝指令**：`claude mcp add github npx github/github-mcp-server`
-- **環境變數**：`export GITHUB_TOKEN=ghp_your_github_token`
+- **安裝指令**：`claude mcp add github --scope project --transport http https://api.githubcopilot.com/mcp -H "Authorization: Bearer YOUR_GITHUB_PAT"`
+- **環境變數**：`export GITHUB_TOKEN=your_github_pat`
 - **主要功能**：
   - 儲存庫管理：讀取和分析 GitHub 儲存庫內容
   - Issues 和 PR：管理 Issues、Pull Requests 和程式碼審查
@@ -53,12 +44,45 @@
 
 #### Serena MCP
 - **官方來源**：[oraios/serena](https://github.com/oraios/serena)
-- **核心作用**：智慧程式碼分析與編輯工具箱
-- **安裝指令**：`claude mcp add serena npx @oraios/serena`
+- **核心作用**：強大的開源編碼代理工具包，提供 IDE 級語義程式碼理解
+- **前置需求**：需要安裝 `uv` (Python 套件管理工具)
+- **安裝方式**：提供兩種運行方式
+
+  **方式 1：使用 uvx (推薦，無需本地安裝)**
+  ```bash
+  # 1. 安裝 uv
+  brew install uv
+
+  # 2. 使用 uvx 直接運行最新版本
+  claude mcp add-json "serena" '{"command":"uvx","args":["--from","git+https://github.com/oraios/serena","serena","start-mcp-server"]}'
+  ```
+
+  **方式 2：本地安裝 (適合需要自定義配置)**
+  ```bash
+  # 1. 安裝 uv
+  brew install uv
+
+  # 2. 克隆儲存庫
+  git clone https://github.com/oraios/serena
+  cd serena
+
+  # 3. (可選) 編輯配置
+  uv run serena config edit
+
+  # 4. 添加到 Claude Code
+  claude mcp add-json "serena" '{"command":"uv","args":["run","serena","start-mcp-server"],"cwd":"/absolute/path/to/serena"}'
+  ```
+- **重要特性**：
+  - **自動 Dashboard**：啟動時會在 localhost 開啟 web-based dashboard，顯示日誌並允許關閉伺服器
+  - **stdio 通信**：使用標準輸入/輸出與客戶端通信
+  - **可配置**：支援命令列參數和配置檔案自訂行為
+
 - **主要功能**：
-  - 語意程式碼檢索：使用 LSP 進行精確的程式碼搜尋
-  - 符號層級編輯：在程式碼符號層級進行精確的修改和重構
-  - 多語言支援：支援 20+ 種程式語言的深度分析
+  - **語義程式碼理解**：使用 LSP 進行符號級分析、AST 和引用圖
+  - **精確程式碼檢索**：`find_symbol`、`find_referencing_symbols` 等精確定位工具
+  - **符號層級編輯**：`insert_after_symbol` 等精確編輯工具
+  - **Token 效益優化**：減少上下文需求，大幅降低 API 成本
+  - **大型專案支援**：維持全局專案上下文，適合複雜程式碼庫
 
 ### MCP 記憶體匯入策略
 每個 MCP 都會自動讀取這個記憶體配置，確保：
@@ -71,45 +95,45 @@
 - **自然語言**：用描述需求的方式，而非指定工具
 - **工具整合**：相信 MCP 生態系統的智慧協調
 
-### .mcp.json 完整配置範例
+### 專案 MCP 配置範例 (.mcp.json)
 ```json
 {
-  "servers": {
-    "xcodebuild": {
-      "command": "npx",
-      "args": ["xcodebuildmcp@latest"]
-    },
-    "figma": {
-      "command": "npx",
-      "args": ["@modelcontextprotocol/server-figma"],
-      "env": {
-        "FIGMA_ACCESS_TOKEN": "${FIGMA_TOKEN}"
+  "mcp": {
+    "servers": {
+      "xcodebuild": {
+        "command": "npx",
+        "args": ["xcodebuildmcp@latest"]
+      },
+      "github": {
+        "transport": "http",
+        "url": "https://api.githubcopilot.com/mcp",
+        "headers": {
+          "Authorization": "Bearer ${GITHUB_TOKEN}"
+        }
+      },
+      "filesystem": {
+        "command": "npx",
+        "args": ["@modelcontextprotocol/server-filesystem"],
+        "env": {
+          "ALLOWED_PATHS": "./WeatherApp,./Tests,./Resources"
+        }
+      },
+      "context7": {
+        "command": "npx",
+        "args": ["@upstash/context7-mcp"],
+        "env": {
+          "PROJECT_ROOT": "."
+        }
+      },
+      "serena": {
+        "command": "uvx",
+        "args": [
+          "--from",
+          "git+https://github.com/oraios/serena",
+          "serena",
+          "start-mcp-server"
+        ]
       }
-    },
-    "github": {
-      "command": "npx",
-      "args": ["github/github-mcp-server"],
-      "env": {
-        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
-      }
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": ["@modelcontextprotocol/server-filesystem"],
-      "env": {
-        "ALLOWED_PATHS": "./WeatherApp,./Tests,./Resources"
-      }
-    },
-    "context7": {
-      "command": "npx",
-      "args": ["@upstash/context7-mcp"],
-      "env": {
-        "PROJECT_ROOT": "."
-      }
-    },
-    "serena": {
-      "command": "npx",
-      "args": ["@oraios/serena"]
     }
   }
 }
