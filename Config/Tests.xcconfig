@@ -7,7 +7,7 @@
 // ==========================================
 // Test Target Settings (Customizable by scaffold tool)
 // ==========================================
-PRODUCT_BUNDLE_IDENTIFIER = com.yourname.weatherapp
+PRODUCT_BUNDLE_IDENTIFIER = com.seandev.WeatherApp
 TEST_TARGET_NAME = WeatherApp
 
 // Fix duplicate module name issue
