@@ -159,3 +159,5 @@ TestResults/
 .env.local
 .env.*.local
 .mcp.json
+
+.serena/
