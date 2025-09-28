@@ -128,6 +128,9 @@ Temporary Items
 # Local History for Visual Studio Code
 .history/
 
+# IDE specific files
+.cursor/
+
 # Claude Code specific
 .claude/
 
@@ -155,3 +158,4 @@ TestResults/
 .env
 .env.local
 .env.*.local
+.mcp.json
